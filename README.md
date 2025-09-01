@@ -1,11 +1,8 @@
-# 🚀 GestionPro – Application de Gestion de Projet
-
-**GestionPro** est une application web de gestion de projet inspirée de **Smartsheet**, mais plus avancée.  
+GestionPro est une application web de gestion de projet inspirée de **Smartsheet**, mais plus avancée.  
 Elle permet de suivre les projets, gérer les tâches, planifier avec un diagramme de Gantt, contrôler le budget et générer des rapports.
 
 ---
-
-## 📌 Fonctionnalités principales
+ 📌 Fonctionnalités principales
 - 📊 **Tableau de bord** : aperçu des projets actifs, tâches terminées, tâches en retard et budget global.
 - ✅ **Gestion des tâches** : liste des tâches avec responsable, durée, dépendances et statut (En cours, Terminé, En retard).
 - 📅 **Planning (Diagramme de Gantt)** : visualisation graphique des tâches et du chemin critique.
@@ -14,7 +11,7 @@ Elle permet de suivre les projets, gérer les tâches, planifier avec un diagram
 
 ---
 
-## 🛠️ Technologies utilisées
+🛠️ Technologies utilisées
 - **HTML5 / CSS3**
 - **TailwindCSS** (design moderne et responsive)
 - **JavaScript**
