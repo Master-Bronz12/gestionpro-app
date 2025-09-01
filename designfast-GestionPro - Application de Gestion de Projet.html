@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestionPro - Application de Gestion de Projet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .nav-item.active { color: #3b82f6; }
+        .nav-item.active svg { stroke: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header name="app-header" class="bg-white shadow-sm fixed top-0 w-full z-10 px-4 py-3 flex items-center justify-between">
+        <div name="logo-container" class="flex items-center space-x-2">
+            <div name="logo" class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-lg">GP</span>
+            </div>
+            <span class="font-semibold text-gray-900">GestionPro</span>
+        </div>
+        <button name="menu-button" class="p-2">
+            <div class="w-5 h-5">
+                <img src="https://api.designfast.io/v1/svg_generator/findone?desc=hamburger%20menu%20icon&icon_set=tabler&color=%23374151" alt="Menu" class="w-full h-full">
+            </div>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main name="main-content" class="pt-16 pb-20 px-4">
+        <!-- Screen 1: Accueil / Tableau de bord -->
+        <div name="dashboard-screen" class="screen active" id="dashboard">
+            <div name="overview-cards" class="grid grid-cols-2 gap-4 mb-6">
+                <div name="active-projects-card" class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Projets actifs</p>
+                            <p class="text-2xl font-bold text-gray-900">12</p>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <div class="w-5 h-5">
+                                <img src="https://api.designfast.io/v1/svg_generator/findone?desc=project%20folder%20icon&icon_set=tabler&color=%233b82f6" alt="Projets">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div name="completed-tasks-card" class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Tâches terminées</p>
+                            <p class="text-2xl font-bold text-green-600">48</p>
+                        </div>
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                            <div class="w-5 h-5">
+                                <img src="https://api.designfast.io/v1/svg_generator/findone?desc=checkmark%20icon&icon_set=tabler&color=%2316a34a" alt="Terminées">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div name="overdue-tasks-card" class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Tâches en retard</p>
+                            <p class="text-2xl font-bold text-red-600">7</p>
+                        </div>
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                            <div class="w-5 h-5">
+                                <img src="https://api.designfast.io/v1/svg_generator/findone?desc=warning%20clock%20icon&icon_set=tabler&color=%23dc2626" alt="En retard">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div name="budget-card" class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Budget</p>
+                            <p class="text-2xl font-bold text-gray-900">€45K</p>
+                        </div>
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <div class="w-5 h-5">
+                                <img src="https://api.designfast.io/v1/svg_generator/findone?desc=euro%20money%20icon&icon_set=tabler&color=%237c3aed" alt="Budget">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div name="progress-chart-container" class="bg-white p-6 rounded-xl shadow-sm">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Taux d'avancement global</h3>
+                <div class="flex justify-center">
+                    <canvas id="progressChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Tâches -->
+        <div name="tasks-screen" class="screen" id="tasks">
+            <div name="tasks-header" class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Tâches</h2>
+                <select name="task-filter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                    <option>Par responsable</option>
+                    <option>Par statut</option>
+                    <option>Par priorité</option>
+                </select>
+            </div>
+            
+            <div name="tasks-list" class="space-y-3 mb-6">
+                <div name="task-card-1" class="bg-white p-4 rounded-xl shadow-sm">
+                    <h4 class="font-medium text-gray-900">Développement API</h4>
+                    <p class="text-sm text-gray-600 mt-1">Responsable: Marie Dupont</p>
+                    <span class="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">En cours</span>
+                </div>
+                <div name="task-card-2" class="bg-white p-4 rounded-xl shadow-sm">
+                    <h4 class="font-medium text-gray-900">Tests unitaires</h4>
+                    <p class="text-sm text-gray-600 mt-1">Responsable: Pierre Martin</p>
+                    <span class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Terminé</span>
+                </div>
+                <div name="task-card-3" class="bg-white p-4 rounded-xl shadow-sm">
+                    <h4 class="font-medium text-gray-900">Documentation utilisateur</h4>
+                    <p class="text-sm text-gray-600 mt-1">Responsable: Sophie Bernard</p>
+                    <span class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">En retard</span>
+                </div>
+            </div>
+            
+            <!-- Floating Action Button -->
+            <button name="fab-new-task" class="fixed bottom-24 right-4 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center">
+                <div class="w-6 h-6">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=plus%20icon&icon_set=tabler&color=%23ffffff" alt="Nouvelle tâche">
+                </div>
+            </button>
+        </div>
+
+        <!-- Screen 3: Planning -->
+        <div name="planning-screen" class="screen" id="planning">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Planning du projet</h2>
+            
+            <div name="gantt-container" class="bg-white p-4 rounded-xl shadow-sm overflow-x-auto">
+                <div name="gantt-timeline" class="min-w-full">
+                    <div class="flex items-center text-xs text-gray-600 mb-4">
+                        <div class="w-32">Tâches</div>
+                        <div class="flex space-x-4">
+                            <span>Jan</span>
+                            <span class="ml-8">Fév</span>
+                            <span class="ml-8">Mar</span>
+                            <span class="ml-8">Avr</span>
+                        </div>
+                    </div>
+                    
+                    <div name="gantt-task-1" class="flex items-center mb-3">
+                        <div class="w-32 text-sm font-medium">API Backend</div>
+                        <div class="flex-1 relative">
+                            <div class="h-6 bg-blue-500 rounded" style="width: 40%; margin-left: 10%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div name="gantt-task-2" class="flex items-center mb-3">
+                        <div class="w-32 text-sm font-medium">Interface utilisateur</div>
+                        <div class="flex-1 relative">
+                            <div class="h-6 bg-green-500 rounded" style="width: 30%; margin-left: 50%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div name="gantt-task-3" class="flex items-center mb-3">
+                        <div class="w-32 text-sm font-medium">Tests critiques</div>
+                        <div class="flex-1 relative">
+                            <div class="h-6 bg-red-500 rounded" style="width: 20%; margin-left: 70%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Budget -->
+        <div name="budget-screen" class="screen" id="budget">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Budget</h2>
+            
+            <div name="budget-charts" class="space-y-4 mb-6">
+                <div name="budget-comparison-chart" class="bg-white p-4 rounded-xl shadow-sm">
+                    <h3 class="font-medium text-gray-900 mb-4">Budget prévu vs dépensé</h3>
+                    <canvas id="budgetChart" height="200"></canvas>
+                </div>
+                
+                <div name="expenses-pie-chart" class="bg-white p-4 rounded-xl shadow-sm">
+                    <h3 class="font-medium text-gray-900 mb-4">Répartition des dépenses</h3>
+                    <canvas id="expensesChart" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div name="budget-table" class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-200">
+                    <h3 class="font-medium text-gray-900">Détail par tâche</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tâche</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prévu</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dépensé</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Écart</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-4 py-3 text-sm text-gray-900">API Backend</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">€5,000</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">€4,800</td>
+                                <td class="px-4 py-3 text-sm text-green-600">-€200</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm text-gray-900">Interface UI</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">€3,000</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">€3,500</td>
+                                <td class="px-4 py-3 text-sm text-red-600">Dépassement +€500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: Rapports -->
+        <div name="reports-screen" class="screen" id="reports">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Rapports</h2>
+            
+            <div name="report-filters" class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                <h3 class="font-medium text-gray-900 mb-4">Filtres</h3>
+                <div class="space-y-3">
+                    <select name="date-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>Par date</option>
+                        <option>Cette semaine</option>
+                        <option>Ce mois</option>
+                        <option>Ce trimestre</option>
+                    </select>
+                    <select name="project-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>Par projet</option>
+                        <option>Projet Alpha</option>
+                        <option>Projet Beta</option>
+                        <option>Projet Gamma</option>
+                    </select>
+                    <select name="assignee-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>Par responsable</option>
+                        <option>Marie Dupont</option>
+                        <option>Pierre Martin</option>
+                        <option>Sophie Bernard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div name="report-preview" class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                <h3 class="font-medium text-gray-900 mb-4">Aperçu du rapport</h3>
+                <div class="h-32 bg-gray-50 rounded-lg flex items-center justify-center">
+                    <p class="text-gray-500">Aperçu du rapport généré</p>
+                </div>
+            </div>
+            
+            <div name="export-buttons" class="space-y-3">
+                <button name="export-pdf" class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg font-medium">
+                    Exporter en PDF
+                </button>
+                <button name="export-excel" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg font-medium">
+                    Exporter en Excel
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav name="bottom-navigation" class="fixed bottom-0 w-full bg-white border-t border-gray-200 px-2 py-2">
+        <div class="flex justify-around">
+            <button name="nav-dashboard" class="nav-item active flex flex-col items-center px-3 py-2" onclick="showScreen('dashboard', this)">
+                <div class="w-5 h-5 mb-1">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=dashboard%20grid%20icon&icon_set=tabler&color=%233b82f6" alt="Dashboard">
+                </div>
+                <span class="text-xs">Tableau de bord</span>
+            </button>
+            <button name="nav-tasks" class="nav-item flex flex-col items-center px-3 py-2 text-gray-600" onclick="showScreen('tasks', this)">
+                <div class="w-5 h-5 mb-1">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=task%20list%20icon&icon_set=tabler&color=%236b7280" alt="Tasks">
+                </div>
+                <span class="text-xs">Tâches</span>
+            </button>
+            <button name="nav-planning" class="nav-item flex flex-col items-center px-3 py-2 text-gray-600" onclick="showScreen('planning', this)">
+                <div class="w-5 h-5 mb-1">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=calendar%20schedule%20icon&icon_set=tabler&color=%236b7280" alt="Planning">
+                </div>
+                <span class="text-xs">Planning</span>
+            </button>
+            <button name="nav-budget" class="nav-item flex flex-col items-center px-3 py-2 text-gray-600" onclick="showScreen('budget', this)">
+                <div class="w-5 h-5 mb-1">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=money%20euro%20icon&icon_set=tabler&color=%236b7280" alt="Budget">
+                </div>
+                <span class="text-xs">Budget</span>
+            </button>
+            <button name="nav-reports" class="nav-item flex flex-col items-center px-3 py-2 text-gray-600" onclick="showScreen('reports', this)">
+                <div class="w-5 h-5 mb-1">
+                    <img src="https://api.designfast.io/v1/svg_generator/findone?desc=report%20chart%20icon&icon_set=tabler&color=%236b7280" alt="Reports">
+                </div>
+                <span class="text-xs">Rapports</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // Navigation functionality
+        function showScreen(screenId, navElement) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            navElement.classList.add('active');
+        }
+
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress donut chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            new Chart(progressCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Terminé', 'En cours', 'Restant'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#16a34a', '#3b82f6', '#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Budget comparison chart
+            const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+            new Chart(budgetCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['API', 'UI', 'Tests', 'Docs'],
+                    datasets: [{
+                        label: 'Prévu',
+                        data: [5000, 3000, 2000, 1500],
+                        backgroundColor: '#e5e7eb'
+                    }, {
+                        label: 'Dépensé',
+                        data: [4800, 3500, 1800, 1200],
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Expenses pie chart
+            const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+            new Chart(expensesCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Développement', 'Design', 'Tests', 'Documentation'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: ['#3b82f6', '#16a34a', '#f59e0b', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+</body>
+</html>
